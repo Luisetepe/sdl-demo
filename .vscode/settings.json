@@ -1,0 +1,37 @@
+{
+  "advancedNewFile.exclude": {
+    "**/.git/**": true,
+    "build/**": true,
+    "deps/**": true,
+    ".cache/**": true,
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    ".cache": true,
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    ".cache": true,
+    "**/.git": true,
+    "build": true,
+    "deps": true,
+  },
+  "[cpp]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  }
+}
