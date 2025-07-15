@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
+include(FetchContent)
 
 project(SDL-DEMO VERSION 1.0)
 
@@ -16,15 +17,32 @@ set(SDL_STATIC ON)
 set(SDLIMAGE_VENDORED OFF)
 set(SDLMIXER_VENDORED OFF)
 
-# Add the SDL3 and SDL3_image subdirectories
-add_subdirectory(deps/SDL)
-add_subdirectory(deps/SDL_image)
-add_subdirectory(deps/SDL_mixer)
+# Fetch SDL3, SDL3_image, and SDL3_mixer from their respective repositories
+FetchContent_Declare(
+  SDL3_SRC
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_TAG release-3.2.18
+)
+FetchContent_MakeAvailable(SDL3_SRC)
+
+FetchContent_Declare(
+  SDL3_IMAGE_SRC
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+  GIT_TAG release-3.2.4
+)
+FetchContent_MakeAvailable(SDL3_IMAGE_SRC)
+
+FetchContent_Declare(
+  SDL3_MIXER_SRC
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+  GIT_TAG main
+)
+FetchContent_MakeAvailable(SDL3_MIXER_SRC)
 
 # Create an executable from our source files
 add_executable(sdl-demo src/main.cpp)
 
-# Link our application against SDL3 and SDL3_image
+# Link our application against SDL3 libraries
 target_link_libraries(
     sdl-demo
     PRIVATE
