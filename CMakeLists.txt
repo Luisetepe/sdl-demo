@@ -17,6 +17,11 @@ set(SDL_STATIC ON)
 set(SDLIMAGE_VENDORED OFF)
 set(SDLMIXER_VENDORED OFF)
 
+# Define the source assets directory
+set(ASSETS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets")
+# Define the destination assets directory in the build output
+set(ASSETS_DEST_DIR "${CMAKE_BINARY_DIR}/release/assets")
+
 # Fetch SDL3, SDL3_image, and SDL3_mixer from their respective repositories
 FetchContent_Declare(
   SDL3_SRC
@@ -42,6 +47,13 @@ FetchContent_MakeAvailable(SDL3_MIXER_SRC)
 # Create an executable from our source files
 add_executable(sdl-demo src/main.cpp)
 
+# Set the output directory for the executable
+set_target_properties(
+    sdl-demo
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/release"
+)
+
 # Link our application against SDL3 libraries
 target_link_libraries(
     sdl-demo
@@ -49,4 +61,14 @@ target_link_libraries(
     SDL3::SDL3
     SDL3_image::SDL3_image
     SDL3_mixer::SDL3_mixer
+)
+
+# Add a custom command to copy the assets directory
+add_custom_command(
+    TARGET sdl-demo
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+        "${ASSETS_SOURCE_DIR}"
+        "${ASSETS_DEST_DIR}"
+    COMMENT "Copying assets to build directory for sdl-demo"
 )

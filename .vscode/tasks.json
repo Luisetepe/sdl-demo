@@ -1,0 +1,21 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake Configure (default)",
+            "type": "shell",
+            "command": "cmake --preset default",
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake Build (default)",
+            "type": "shell",
+            "command": "cmake --build --preset default",
+            "group": "build",
+            "problemMatcher": [],
+            // "dependsOn": ["CMake Configure (default)"]
+        }
+    ]
+}
