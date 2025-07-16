@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
 
         // Clean up
         close();
-
-        return exitCode;
     }
+
+    return exitCode;
 }
 
 bool init()

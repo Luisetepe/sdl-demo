@@ -4,18 +4,27 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "CMake Configure (default)",
+            "label": "CMake Configure (Debug)",
             "type": "shell",
-            "command": "cmake --preset default",
+            "windows": {
+                "command": "Start-VsEnv && cmake --preset win-clang-debug",
+            },
+            "osx": {
+                "command": "cmake --preset debug",
+            },
             "problemMatcher": []
         },
         {
-            "label": "CMake Build (default)",
+            "label": "CMake Build (Debug)",
             "type": "shell",
-            "command": "cmake --build --preset default",
+            "windows": {
+                "command": "Start-VsEnv && cmake --build --preset win-clang-debug",
+            },
+            "osx": {
+                "command": "cmake --build --preset debug",
+            },
             "group": "build",
-            "problemMatcher": [],
-            // "dependsOn": ["CMake Configure (default)"]
+            "problemMatcher": []
         }
     ]
 }

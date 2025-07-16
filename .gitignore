@@ -1,5 +1,6 @@
 # CMake build files
 build/
+CMakeUserPresets.json
 
 # IDE-specific files
 .idea/

@@ -5,14 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "lldb-dap",
+            "type": "lldb",
             "request": "launch",
-            "name": "Launch",
-            "program": "${workspaceRoot}/build/release/sdl-demo",
+            "name": "Debug SDL Demo",
+            "windows": {
+                "program": "${workspaceRoot}/build/release/sdl-demo.exe",
+            },
+            "osx": {
+                "program": "${workspaceRoot}/build/release/sdl-demo"
+            },
             "args": [],
-            "env": [],
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "CMake Build (default)"
+            "cwd": "${workspaceRoot}/build/release",
         },
     ]
 }
