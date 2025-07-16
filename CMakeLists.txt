@@ -45,7 +45,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL3_MIXER_SRC)
 
 # Create an executable from our source files
-add_executable(sdl-demo src/main.cpp)
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
+add_executable(sdl-demo ${SOURCES})
 
 # Set the output directory for the executable
 set_target_properties(

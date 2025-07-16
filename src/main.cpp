@@ -1,5 +1,8 @@
+#include "texture.h"
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
 #include <string>
 
 // Screen dimension constants
@@ -16,11 +19,11 @@ void close();
 // The window we'll be rendering to
 SDL_Window *gWindow{ nullptr };
 
-// The surface contained by the window
-SDL_Surface *gScreenSurface{ nullptr };
+// The renderer used to draw to the window
+SDL_Renderer *gRenderer{ nullptr };
 
-// The image we will load and show on the screen
-SDL_Surface *gHelloWorld{ nullptr };
+// The PNG image we will render
+LTexture gPngTexture;
 
 int main(int argc, char *argv[])
 {
@@ -55,14 +58,15 @@ int main(int argc, char *argv[])
                     }
                 }
 
-                // Fill the surface white
-                SDL_FillSurfaceRect(gScreenSurface, nullptr, SDL_MapSurfaceRGB(gScreenSurface, 0xFF, 0xFF, 0xFF));
+                // Fill the background white
+                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_RenderClear(gRenderer);
 
                 // Render image on screen
-                SDL_BlitSurface(gHelloWorld, nullptr, gScreenSurface, nullptr);
+                gPngTexture.render(gRenderer, 0.f, 0.f);
 
-                // Update the surface
-                SDL_UpdateWindowSurface(gWindow);
+                // Update screen
+                SDL_RenderPresent(gRenderer);
             }
         }
 
@@ -83,13 +87,11 @@ bool init()
         SDL_Log("SDL could not initialize! SDL error: %s\n", SDL_GetError());
         success = false;
     } else {
-        // Create window
-        if (gWindow = SDL_CreateWindow("SDL3 Tutorial: Hello SDL3", kScreenWidth, kScreenHeight, 0); gWindow == nullptr) {
+        // Create window with renderer
+        if (!SDL_CreateWindowAndRenderer("SDL3 Tutorial: Textures and Extension Libraries",
+                                         kScreenWidth, kScreenHeight, 0, &gWindow, &gRenderer)) {
             SDL_Log("Window could not be created! SDL error: %s\n", SDL_GetError());
             success = false;
-        } else {
-            // Get window surface
-            gScreenSurface = SDL_GetWindowSurface(gWindow);
         }
     }
 
@@ -102,9 +104,8 @@ bool loadMedia()
     bool success{ true };
 
     // Load splash image
-    std::string imagePath{ "assets/hello-sdl3.bmp" };
-    if (gHelloWorld = SDL_LoadBMP(imagePath.c_str()); gHelloWorld == nullptr) {
-        SDL_Log("Unable to load image %s! SDL Error: %s\n", imagePath.c_str(), SDL_GetError());
+    if (!gPngTexture.loadFromFile(gRenderer, "assets/loaded.png")) {
+        SDL_Log("Unable to load png image!\n");
         success = false;
     }
 
@@ -113,14 +114,14 @@ bool loadMedia()
 
 void close()
 {
-    // Clean up surface
-    SDL_DestroySurface(gHelloWorld);
-    gHelloWorld = nullptr;
+    // Clean up texture
+    gPngTexture.destroy();
 
     // Destroy window
+    SDL_DestroyRenderer(gRenderer);
+    gRenderer = nullptr;
     SDL_DestroyWindow(gWindow);
     gWindow = nullptr;
-    gScreenSurface = nullptr;
 
     // Quit SDL subsystems
     SDL_Quit();

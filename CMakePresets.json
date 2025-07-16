@@ -12,12 +12,34 @@
       }
     },
     {
+      "name": "release",
+      "displayName": "Release Config",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
       "name": "win-clang-debug",
       "displayName": "Windows Clang Debug",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      }
+    },
+    {
+      "name": "win-clang-release",
+      "displayName": "Windows Clang Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_C_COMPILER": "clang-cl",
         "CMAKE_CXX_COMPILER": "clang-cl"
@@ -30,8 +52,16 @@
       "configurePreset": "debug"
     },
     {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
       "name": "win-clang-debug",
       "configurePreset": "win-clang-debug"
+    },
+    {
+      "name": "win-clang-release",
+      "configurePreset": "win-clang-release"
     }
   ]
 }
