@@ -56,18 +56,3 @@ void LTexture::destroy()
     mWidth = 0;
     mHeight = 0;
 }
-
-int LTexture::getWidth()
-{
-    return mWidth;
-}
-
-int LTexture::getHeight()
-{
-    return mHeight;
-}
-
-bool LTexture::isLoaded()
-{
-    return mTexture != nullptr;
-}
