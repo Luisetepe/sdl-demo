@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "texture.hpp"
 
 LTexture::LTexture() : // Initialize texture variables
                        mTexture{ nullptr },

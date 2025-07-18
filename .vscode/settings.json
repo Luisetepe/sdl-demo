@@ -34,7 +34,13 @@
     "editor.formatOnSave": true,
     "editor.tabSize": 2
   },
-  "explorer.fileNesting.patterns":{
+  "explorer.fileNesting.patterns": {
     "*.h": "${capture}.cpp",
-  }
+    "*.hpp": "${capture}.cpp",
+  },
+  "git.ignoredRepositories": [
+    "deps/SDL",
+    "deps/SDL_image",
+    "deps/SDL_mixer"
+  ],
 }

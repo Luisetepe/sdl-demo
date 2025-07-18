@@ -1,8 +1,9 @@
-#include "texture.h"
+#include "texture.hpp"
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
+#include <expected>
 #include <string>
 
 // Screen dimension constants
@@ -24,6 +25,14 @@ SDL_Renderer *gRenderer{ nullptr };
 
 // The PNG image we will render
 LTexture gPngTexture;
+
+std::expected<int, std::string> division(int x, int y)
+{
+    if (y == 0) {
+        return std::unexpected("Division by zero error");
+    }
+    return x / y;
+}
 
 int main(int argc, char *argv[])
 {
