@@ -12,6 +12,18 @@ class LTexture
     // Cleans up texture variables
     ~LTexture();
 
+    // Remove copy constructor
+    LTexture(const LTexture &) = delete;
+
+    // Remove copy assignment
+    LTexture &operator=(const LTexture &) = delete;
+
+    // Remove move constructor
+    LTexture(LTexture &&) = delete;
+
+    // Remove move assignment
+    LTexture &operator=(LTexture &&) = delete;
+
     // Loads texture from disk
     bool loadFromFile(SDL_Renderer *renderer, std::string path);
 
@@ -22,9 +34,9 @@ class LTexture
     void render(SDL_Renderer *renderer, float x, float y);
 
     // Gets texture attributes
-    int getWidth();
-    int getHeight();
-    bool isLoaded();
+    inline int getWidth() { return mWidth; }
+    inline int getHeight() { return mHeight; }
+    inline bool isLoaded() { return mTexture != nullptr; }
 
   private:
     // Contains texture data

@@ -16,6 +16,7 @@
             },
             "args": [],
             "cwd": "${workspaceRoot}/build/release",
+            "preLaunchTask": "CMake Build (Debug)"
         },
     ]
 }

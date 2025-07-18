@@ -1,10 +1,12 @@
 #include "texture.hpp"
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
-#include <expected>
 #include <string>
+
 
 // Screen dimension constants
 constexpr int kScreenWidth{ 640 };
@@ -23,16 +25,11 @@ SDL_Window *gWindow{ nullptr };
 // The renderer used to draw to the window
 SDL_Renderer *gRenderer{ nullptr };
 
-// The PNG image we will render
-LTexture gPngTexture;
-
-std::expected<int, std::string> division(int x, int y)
-{
-    if (y == 0) {
-        return std::unexpected("Division by zero error");
-    }
-    return x / y;
-}
+// The directional images
+LTexture gDownTexture;
+LTexture gLeftTexture;
+LTexture gRightTexture;
+LTexture gUpTexture;
 
 int main(int argc, char *argv[])
 {
@@ -56,6 +53,12 @@ int main(int argc, char *argv[])
             // The event data
             SDL_Event e;
             SDL_zero(e);
+
+            // Pointer to the current texture
+            LTexture *currentTexture{ &gUpTexture };
+            // Background color defaults to white
+            SDL_Color bgColor{ 0xFF, 0xFF, 0xFF, 0xFF };
+
             // The main loop
             while (!quit) {
                 // Get event data
@@ -64,15 +67,31 @@ int main(int argc, char *argv[])
                     if (e.type == SDL_EVENT_QUIT) {
                         // End the main loop
                         quit = true;
+
+                    }
+                    // On keyboard key press
+                    else if (e.type == SDL_EVENT_KEY_DOWN) {
+                        if (e.key.key == SDLK_A) {
+                            currentTexture = &gLeftTexture;
+                        } else if (e.key.key == SDLK_D) {
+                            currentTexture = &gRightTexture;
+                        } else if (e.key.key == SDLK_W) {
+                            currentTexture = &gUpTexture;
+                        } else if (e.key.key == SDLK_S) {
+                            currentTexture = &gDownTexture;
+                        }
                     }
                 }
 
-                // Fill the background white
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                // Fill the background with the selected color
+                SDL_SetRenderDrawColor(gRenderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
                 SDL_RenderClear(gRenderer);
 
                 // Render image on screen
-                gPngTexture.render(gRenderer, 0.f, 0.f);
+                currentTexture->render(gRenderer,
+                                       // Center the texture on the screen
+                                       (kScreenWidth - currentTexture->getWidth()) * 0.5f,
+                                       (kScreenHeight - currentTexture->getHeight()) * 0.5f);
 
                 // Update screen
                 SDL_RenderPresent(gRenderer);
@@ -113,8 +132,26 @@ bool loadMedia()
     bool success{ true };
 
     // Load splash image
-    if (!gPngTexture.loadFromFile(gRenderer, "assets/loaded.png")) {
-        SDL_Log("Unable to load png image!\n");
+    if (!gUpTexture.loadFromFile(gRenderer, "assets/up.png")) {
+        SDL_Log("Unable to load UP png image!\n");
+        success = false;
+    }
+
+    // Load down image
+    if (!gDownTexture.loadFromFile(gRenderer, "assets/down.png")) {
+        SDL_Log("Unable to load DOWN png image!\n");
+        success = false;
+    }
+
+    // Load left image
+    if (!gLeftTexture.loadFromFile(gRenderer, "assets/left.png")) {
+        SDL_Log("Unable to load LEFT png image!\n");
+        success = false;
+    }
+
+    // Load right image
+    if (!gRightTexture.loadFromFile(gRenderer, "assets/right.png")) {
+        SDL_Log("Unable to load RIGHT png image!\n");
         success = false;
     }
 
@@ -124,7 +161,10 @@ bool loadMedia()
 void close()
 {
     // Clean up texture
-    gPngTexture.destroy();
+    gUpTexture.destroy();
+    gDownTexture.destroy();
+    gLeftTexture.destroy();
+    gRightTexture.destroy();
 
     // Destroy window
     SDL_DestroyRenderer(gRenderer);

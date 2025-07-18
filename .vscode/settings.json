@@ -12,6 +12,7 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     ".cache": true,
+    "build": true,
   },
   "search.exclude": {
     "**/node_modules": true,
