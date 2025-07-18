@@ -43,5 +43,5 @@
     "deps/SDL",
     "deps/SDL_image",
     "deps/SDL_mixer"
-  ],
+  ]
 }

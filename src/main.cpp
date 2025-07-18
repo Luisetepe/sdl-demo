@@ -7,7 +7,6 @@
 #include <SDL3_image/SDL_image.h>
 #include <string>
 
-
 // Screen dimension constants
 constexpr int kScreenWidth{ 640 };
 constexpr int kScreenHeight{ 480 };
@@ -25,11 +24,9 @@ SDL_Window *gWindow{ nullptr };
 // The renderer used to draw to the window
 SDL_Renderer *gRenderer{ nullptr };
 
-// The directional images
-LTexture gDownTexture;
-LTexture gLeftTexture;
-LTexture gRightTexture;
-LTexture gUpTexture;
+// Textures
+LTexture gFooTexture;
+LTexture gBgTexture;
 
 int main(int argc, char *argv[])
 {
@@ -54,8 +51,6 @@ int main(int argc, char *argv[])
             SDL_Event e;
             SDL_zero(e);
 
-            // Pointer to the current texture
-            LTexture *currentTexture{ &gUpTexture };
             // Background color defaults to white
             SDL_Color bgColor{ 0xFF, 0xFF, 0xFF, 0xFF };
 
@@ -67,31 +62,16 @@ int main(int argc, char *argv[])
                     if (e.type == SDL_EVENT_QUIT) {
                         // End the main loop
                         quit = true;
-
-                    }
-                    // On keyboard key press
-                    else if (e.type == SDL_EVENT_KEY_DOWN) {
-                        if (e.key.key == SDLK_A) {
-                            currentTexture = &gLeftTexture;
-                        } else if (e.key.key == SDLK_D) {
-                            currentTexture = &gRightTexture;
-                        } else if (e.key.key == SDLK_W) {
-                            currentTexture = &gUpTexture;
-                        } else if (e.key.key == SDLK_S) {
-                            currentTexture = &gDownTexture;
-                        }
                     }
                 }
 
-                // Fill the background with the selected color
-                SDL_SetRenderDrawColor(gRenderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+                // Fill the background white
+                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
                 SDL_RenderClear(gRenderer);
 
-                // Render image on screen
-                currentTexture->render(gRenderer,
-                                       // Center the texture on the screen
-                                       (kScreenWidth - currentTexture->getWidth()) * 0.5f,
-                                       (kScreenHeight - currentTexture->getHeight()) * 0.5f);
+                // Render images on screen
+                gBgTexture.render(gRenderer, 0.f, 0.f);
+                gFooTexture.render(gRenderer, 240.f, 190.f);
 
                 // Update screen
                 SDL_RenderPresent(gRenderer);
@@ -131,27 +111,13 @@ bool loadMedia()
     // File loading flag
     bool success{ true };
 
-    // Load splash image
-    if (!gUpTexture.loadFromFile(gRenderer, "assets/up.png")) {
-        SDL_Log("Unable to load UP png image!\n");
+    // Load scene images
+    if (!gFooTexture.loadFromFile(gRenderer, "assets/foo.png")) {
+        SDL_Log("Unable to load foo image!\n");
         success = false;
     }
-
-    // Load down image
-    if (!gDownTexture.loadFromFile(gRenderer, "assets/down.png")) {
-        SDL_Log("Unable to load DOWN png image!\n");
-        success = false;
-    }
-
-    // Load left image
-    if (!gLeftTexture.loadFromFile(gRenderer, "assets/left.png")) {
-        SDL_Log("Unable to load LEFT png image!\n");
-        success = false;
-    }
-
-    // Load right image
-    if (!gRightTexture.loadFromFile(gRenderer, "assets/right.png")) {
-        SDL_Log("Unable to load RIGHT png image!\n");
+    if (!gBgTexture.loadFromFile(gRenderer, "assets/background.png")) {
+        SDL_Log("Unable to load background image!\n");
         success = false;
     }
 
@@ -161,10 +127,8 @@ bool loadMedia()
 void close()
 {
     // Clean up texture
-    gUpTexture.destroy();
-    gDownTexture.destroy();
-    gLeftTexture.destroy();
-    gRightTexture.destroy();
+    gFooTexture.destroy();
+    gBgTexture.destroy();
 
     // Destroy window
     SDL_DestroyRenderer(gRenderer);

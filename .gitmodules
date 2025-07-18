@@ -6,9 +6,9 @@
 	path = deps/SDL_image
 	url = https://github.com/libsdl-org/SDL_image
 	shallow = true
-	recurse = false
+	fetchRecurseSubmodules = false
 [submodule "deps/SDL_mixer"]
 	path = deps/SDL_mixer
 	url = https://github.com/libsdl-org/SDL_mixer
 	shallow = true
-	recurse = false
+	fetchRecurseSubmodules = false
