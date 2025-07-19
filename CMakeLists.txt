@@ -1,58 +1,106 @@
+# =============================
+# Project and CMake Version
+# =============================
 cmake_minimum_required(VERSION 3.25)
-include(FetchContent)
+project(sdl-demo VERSION 1.0)
 
-project(SDL-DEMO VERSION 1.0)
-
-# Set the C++ standard to C++23
+# =============================
+# Compiler Settings
+# =============================
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Disable Shared Libs
-set(BUILD_SHARED_LIBS OFF)
-set(SDL_SHARED OFF)
-set(SDL_STATIC ON)
+set(PROJECT_TARGET_NAME sdl-demo)
 
-# Disable 3rd party dependencies
-set(SDLIMAGE_VENDORED OFF)
-set(SDLMIXER_VENDORED OFF)
+# =============================
+# Dependencies: SDL3, SDL3_image, SDL3_mixer
+# =============================
+find_library(SDL3_LIB
+    NAMES SDL3
+    PATHS "${CMAKE_SOURCE_DIR}/vendor/SDL/bin"
+    NO_DEFAULT_PATH
+)
 
-# Define the source assets directory
-set(ASSETS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets")
-# Define the destination assets directory in the build output
-set(ASSETS_DEST_DIR "${CMAKE_BINARY_DIR}/release/assets")
+find_library(SDL3_IMAGE_LIB
+    NAMES SDL3_image
+    PATHS "${CMAKE_SOURCE_DIR}/vendor/SDL_image/bin"
+    NO_DEFAULT_PATH
+)
 
-# Add the SDL3 and SDL3_image subdirectories
-add_subdirectory(deps/SDL)
-add_subdirectory(deps/SDL_image)
-add_subdirectory(deps/SDL_mixer)
+find_library(SDL3_MIXER_LIB
+    NAMES SDL3_mixer
+    PATHS "${CMAKE_SOURCE_DIR}/vendor/SDL_mixer/bin"
+    NO_DEFAULT_PATH
+)
 
-# Create an executable from our source files
-file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
-add_executable(sdl-demo ${SOURCES})
+# Fail if the library is not found
+if(NOT SDL3_LIB)
+    message(FATAL_ERROR "SDL library not found in vendor/SDL/bin")
+endif()
 
-# Set the output directory for the executable
+if(NOT SDL3_IMAGE_LIB)
+    message(FATAL_ERROR "SDL_image library not found in vendor/SDL_image/bin")
+endif()
+
+if(NOT SDL3_MIXER_LIB)
+    message(FATAL_ERROR "SDL_mixer library not found in vendor/SDL_mixer/bin")
+endif()
+
+# =============================
+# Source Files
+# =============================
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
+
+# =============================
+# Executable Target
+# =============================
+add_executable(${PROJECT_TARGET_NAME} ${SOURCES})
+
+# =============================
+# Include Directories
+# =============================
+target_include_directories(${PROJECT_TARGET_NAME} PRIVATE
+    vendor/SDL/include
+    vendor/SDL_image/include
+    vendor/SDL_mixer/include
+)
+
+# =============================
+# Link Libraries
+# =============================
+target_link_libraries(${PROJECT_TARGET_NAME} PRIVATE
+    ${SDL3_LIB}
+    ${SDL3_IMAGE_LIB}
+    ${SDL3_MIXER_LIB}
+)
+
+# =============================
+# Output Directories
+# =============================
 set_target_properties(
-    sdl-demo
+    ${PROJECT_TARGET_NAME}
     PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/release"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
 )
 
-# Link our application against SDL3 libraries
-target_link_libraries(
-    sdl-demo
-    PRIVATE
-    SDL3::SDL3
-    SDL3_image::SDL3_image
-    SDL3_mixer::SDL3_mixer
-)
-
-# Add a custom command to copy the assets directory
+# =============================
+# Assets Copy (Post Build)
+# =============================
+set(ASSETS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets")
+set(ASSETS_DEST_DIR "$<TARGET_FILE_DIR:${PROJECT_TARGET_NAME}>/assets")
 add_custom_command(
-    TARGET sdl-demo
-    POST_BUILD
+    TARGET ${PROJECT_TARGET_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
         "${ASSETS_SOURCE_DIR}"
         "${ASSETS_DEST_DIR}"
-    COMMENT "Copying assets to build directory for sdl-demo"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SDL3_LIB}"
+            "$<TARGET_FILE_DIR:${PROJECT_TARGET_NAME}>/"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SDL3_IMAGE_LIB}"
+            "$<TARGET_FILE_DIR:${PROJECT_TARGET_NAME}>/"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SDL3_MIXER_LIB}"
+            "$<TARGET_FILE_DIR:${PROJECT_TARGET_NAME}>/"
 )
