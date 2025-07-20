@@ -1,7 +1,7 @@
 {
     "recommendations": [
         "josetr.cmake-language-support-vscode",
-        "llvm-vs-code-extensions.lldb-dap",
+        "vadimcn.vscode-lldb",
         "llvm-vs-code-extensions.vscode-clangd",
     ]
 }
